@@ -49,7 +49,7 @@ module.exports = {
         
         const total = orderItems.reduce((price, value) => value.price + price, 0)
         
-        await orders.create({
+        orders.create({
             bookId: req.body.orders,
             userId: req.user._id,
             price: total
@@ -57,7 +57,7 @@ module.exports = {
             return res.send({ success: false, message: error.message });
         });
 
-       await users.findOneAndUpdate(
+        users.findOneAndUpdate(
             { _id: req.user._id }, 
             { "$addToSet": { books: { "$each": req.body.orders }}}
         );
