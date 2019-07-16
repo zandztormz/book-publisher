@@ -2,6 +2,7 @@
 const request = require('supertest');
 const mockingoose = require('mockingoose').default;
 const model = require("../models/users.model")
+const orders = require("../models/orders.model")
 const sinon = require("sinon")
 const moxios = require('moxios');
 let app
@@ -26,7 +27,7 @@ describe('Test the root path', () => {
         // restore original method
         auth.getUser.restore();
         moxios.uninstall();
-       
+
     });
 
 
@@ -71,16 +72,22 @@ describe('Test the root path', () => {
 
         moxios.stubRequest("https://scb-test-book-publisher.herokuapp.com/books", {
             status: 200,
-            response:  [{
+            response: [{
                 author_name: "Kristin Hannah",
                 id: 4,
                 book_name: "The Great Alone: A Novel Kristin Hannah",
                 price: 495
             }]
-          });
+        });
 
-       
-        request(app).post('/users/orders').send({orders: [4]}).then((response) => {
+        mockingoose(orders).toReturn({
+            bookId: [4],
+            _id: "5d2dde2011e201580b99b2fd2",
+            userId: '1234',
+            price: '495'
+        }, 'create');
+
+        request(app).post('/users/orders').send({ orders: [4] }).then((response) => {
             expect(response.statusCode).toBe(200);
             done();
         });
@@ -91,25 +98,25 @@ describe('Test the root path', () => {
 
         moxios.stubRequest("https://scb-test-book-publisher.herokuapp.com/books", {
             status: 200,
-            response:  [{
+            response: [{
                 author_name: "Kristin Hannah",
                 id: 4,
                 book_name: "The Great Alone: A Novel Kristin Hannah",
                 price: 495
             }]
-          });
+        });
 
-          moxios.stubRequest("https://scb-test-book-publisher.herokuapp.com/books/recommendation", {
+        moxios.stubRequest("https://scb-test-book-publisher.herokuapp.com/books/recommendation", {
             status: 200,
-            response:  [{
+            response: [{
                 author_name: "Kristin Hannah",
                 id: 4,
                 book_name: "The Great Alone: A Novel Kristin Hannah",
                 price: 495
             }]
-          });
+        });
 
-       
+
         request(app).get('/books').then((response) => {
             expect(response.statusCode).toBe(200);
             done();

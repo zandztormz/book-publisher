@@ -6,6 +6,7 @@ const Users = new mongoose.Schema({
   name: String,
   surname: String,
   date_of_birth: Date,
+  books: Array
 }, { versionKey: false,  timestamps:true });
 
 Users.pre("save", function(next) {

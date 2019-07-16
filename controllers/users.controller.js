@@ -5,7 +5,7 @@ const axios = require("axios")
 module.exports = {
 
     index: async (req, res) => {
-        const data = await users.findById(req.user._id)
+        const data = await users.findById(req.user._id).populate('orders')
         res.send(data)
     },
 
@@ -57,6 +57,12 @@ module.exports = {
             return res.send({ success: false, message: error.message });
         });
 
-        res.status(200).send({ success: true, message: "Order Complete" })
+       await users.findOneAndUpdate(
+            { _id: req.user._id }, 
+            { "$addToSet": { books: { "$each": req.body.orders }}}
+        );
+      
+        
+        res.status(200).send({ success: true, price: total })
     }
 }

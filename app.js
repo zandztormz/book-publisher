@@ -4,7 +4,7 @@ const logger = require('morgan');
 const mongoose = require("mongoose");
 const session = require("express-session");
 const bodyParser = require("body-parser")
-mongoose.connect("mongodb://127.0.0.1/books", { useNewUrlParser: true });
+mongoose.connect("mongodb://127.0.0.1/books", { useNewUrlParser: true, useFindAndModify: true });
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
